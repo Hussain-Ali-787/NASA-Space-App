@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mars — Explorer (Professional)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070204; --card:#111010; --muted:#ffd9c7; --accent:#ff7a5c; --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#050204,var(--bg));font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--muted);-webkit-font-smoothing:antialiased}
+  header{position:fixed;left:0;right:0;top:0;height:68px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;backdrop-filter:blur(6px);z-index:40;border-bottom:1px solid var(--glass)}
+  header h1{margin:0;font-size:16px;font-weight:600}
+  header nav{display:flex;gap:12px}
+  header a{color:var(--muted);text-decoration:none;font-size:13px;padding:8px;border-radius:8px}
+  main{padding-top:92px;padding-bottom:48px;display:flex;justify-content:center}
+  .container{width:1080px;max-width:94%;display:grid;grid-auto-rows:minmax(320px,auto);gap:28px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));padding:18px;border-radius:12px;border:1px solid var(--glass);box-shadow:0 18px 48px rgba(0,0,0,0.6)}
+  .hero{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:center;min-height:420px}
+  .lead{margin:0;color:rgba(255,210,190,0.95);font-size:14px;line-height:1.5}
+  .image-frame{position:relative;height:420px;border-radius:10px;overflow:hidden;background:#060202;border:1px solid rgba(255,255,255,0.02)}
+  .image-frame img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+  .panel{background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;margin-top:0;border:1px solid rgba(255,255,255,0.02)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+  .btn.primary{border-color:var(--accent);color:var(--accent)}
+  .thumbs{display:flex;gap:8px;margin-top:12px}
+  .thumbs img{width:96px;height:64px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+  .reveal{opacity:0;transform:translateY(10px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.visible{opacity:1;transform:none}
+  /* Surface + inspector */
+  .surface-wrap{display:flex;gap:16px;align-items:flex-start}
+  .surface-left{flex:1}
+  .surface-right{width:360px}
+  .surface-image{height:520px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);position:relative}
+  .overlay-dust{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;opacity:0.18}
+  /* rover track (small SVG overlay) */
+  .track-svg{position:absolute;left:4%;bottom:8%;width:62%;height:36%;z-index:6;pointer-events:none}
+  .rover-hud{position:absolute;left:6%;bottom:14%;z-index:8;pointer-events:none}
+  .rover-hud .badge{background:linear-gradient(90deg,#3b1b15,#8b3b2a);padding:8px 10px;border-radius:8px;font-weight:600;box-shadow:0 8px 30px rgba(139,59,42,0.22);}
+  /* Future colonization card */
+  .colonize{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+  .fact{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;font-size:13px}
+  /* gallery */
+  .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .gallery-grid img{width:100%;height:160px;object-fit:cover;border-radius:8px;cursor:pointer}
+  /* zoom modal */
+  .zoom-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(0,0,0,0.9),rgba(0,0,0,0.92));z-index:120}
+  .zoom-card{width:92%;height:84%;background:#000;border-radius:10px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.04)}
+  .zoom-card img{position:absolute;left:0;top:0;user-select:none;touch-action:none}
+  .zoom-close{position:absolute;right:12px;top:12px;background:rgba(255,255,255,0.04);border:0;padding:8px;border-radius:6px;color:#fff;cursor:pointer;z-index:6}
+  footer{display:flex;justify-content:space-between;align-items:center;padding:12px 28px;color:rgba(255,255,255,0.5);font-size:13px}
+  @media(max-width:980px){.hero{grid-template-columns:1fr}.surface-right{width:100%}.colonize{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <header>
+    <h1>Mars — Professional Explorer</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#overview">Overview</a>
+      <a href="#surface">Surface</a>
+      <a href="#missions">Missions</a>
+      <a href="#future">Future</a>
+      <a href="#gallery">Gallery</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Overview -->
+      <section class="card hero reveal" id="overview">
+        <div>
+          <h2 style="margin:0 0 8px 0">Mars — photographic overview</h2>
+          <p class="lead">High-resolution NASA mosaics and instrument composites showing global structure, geology, and mission landing regions. This page matches the professional style used across the Earth & Moon explorer pages.</p>
+          <div class="panel" style="margin-top:12px">
+            <strong>Data Sources</strong>
+            <div style="margin-top:8px;color:rgba(255,210,190,0.85);font-size:14px">
+              MGS MOLA (topography) • MRO HiRISE & CTX (high-resolution) • Viking & Viking mosaics • Public NASA imagery
+            </div>
+            <div style="margin-top:12px">
+              <button class="btn primary" id="openHero">Inspect Full Image</button>
+              <button class="btn" id="toSurface">Go to Surface</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="image-frame" aria-hidden="false">
+          <!-- High-res mosaic (public domain NASA hosted image) -->
+          <img id="heroImg" src="https://upload.wikimedia.org/wikipedia/commons/0/02/PIA00271_-_Mars_Global_Mosaic.jpg" alt="Mars mosaic">
+        </div>
+      </section>
+
+      <!-- Surface -->
+      <section class="card reveal" id="surface">
+        <h3 style="margin:0 0 10px 0">Surface — datasets & hotspots</h3>
+        <p style="margin:0 0 12px 0;color:rgba(255,210,190,0.9)">Click thumbnails to switch datasets. Use the inspector for pan & wheel zoom on the high-resolution mosaic.</p>
+
+        <div class="surface-wrap">
+          <div class="surface-left">
+            <div class="surface-image" id="surfaceImageWrap">
+              <img id="surfaceImg" src="https://mars.nasa.gov/system/downloadable_items/43622_MarsSurface_4k.jpg" alt="Mars surface mosaic" style="transform:scale(1)">
+              <img id="dustOverlay" class="overlay-dust" src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Transparent_mist.png" alt="" style="display:none;object-fit:cover">
+              <!-- SVG rover track -->
+              <svg class="track-svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color='#ffb89f'/><stop offset="1" stop-color='#ff7a5c'/></linearGradient></defs>
+                <path id="trackPath" d="M40 300 C120 240 260 280 380 220 C520 150 640 210 760 170" stroke="url(#g1)" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                <circle id="roverDot" r="8" fill="#ffd8c8" style="filter:drop-shadow(0 6px 14px rgba(0,0,0,0.6))"></circle>
+              </svg>
+              <div class="rover-hud" id="roverHud" aria-hidden="true">
+                <div class="badge">ROVER — Idle</div>
+              </div>
+            </div>
+
+            <div class="thumbs" style="margin-top:12px">
+              <img src="https://mars.nasa.gov/system/downloadable_items/43622_MarsSurface_4k.jpg" data-src="https://mars.nasa.gov/system/downloadable_items/43622_MarsSurface_4k.jpg" alt="Surface topographic">
+              <img src="https://mars.nasa.gov/system/downloadable_items/43623_Mars_Highland.jpg" data-src="https://mars.nasa.gov/system/downloadable_items/43623_Mars_Highland.jpg" alt="Highland">
+              <img src="https://mars.nasa.gov/system/downloadable_items/43624_MarsCraters.jpg" data-src="https://mars.nasa.gov/system/downloadable_items/43624_MarsCraters.jpg" alt="Craters">
+            </div>
+          </div>
+
+          <aside class="surface-right">
+            <div class="panel">
+              <strong>Rover / Site tools</strong>
+              <div style="margin-top:8px;color:rgba(255,210,190,0.86);font-size:14px">Animate a short rover traverse on the mosaic. Toggle a subtle dust overlay to visualize atmospheric opacity.</div>
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <button class="btn" id="animateRover">Animate Rover</button>
+                <button class="btn" id="toggleDust">Toggle Dust</button>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top:12px">
+              <strong>Quick facts</strong>
+              <div style="margin-top:8px;color:rgba(255,210,190,0.86)">
+                Radius: 3,389 km<br>
+                Day: 24h 37m<br>
+                Atmosphere: CO₂ ~95%
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Missions -->
+      <section class="card reveal" id="missions">
+        <h3 style="margin:0 0 10px 0">Selected missions</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div class="panel" style="flex:1">
+            <strong>Surface Missions</strong>
+            <ul style="margin:8px 0 0 16px;color:rgba(255,210,190,0.9)">
+              <li>Viking (1976)</li>
+              <li>Pathfinder & Sojourner (1997)</li>
+              <li>Spirit & Opportunity (2004)</li>
+              <li>Curiosity (2012)</li>
+              <li>Perseverance & Ingenuity (2020)</li>
+            </ul>
+          </div>
+          <div class="panel" style="width:360px">
+            <strong>Orbital Assets</strong>
+            <div style="margin-top:8px;color:rgba(255,210,190,0.9)">MRO (HiRISE/CTX), Mars Odyssey, MAVEN, TGO</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Future Colonization -->
+      <section class="card reveal" id="future">
+        <h3 style="margin:0 0 10px 0">Future Colonization & Concepts</h3>
+        <p style="margin:0 0 12px 0;color:rgba(255,210,190,0.9)">Planned human missions and concept architectures — presented neutrally and with source attribution to public roadmaps.</p>
+
+        <div class="colonize">
+          <div>
+            <div class="panel">
+              <strong>Near-term plans</strong>
+              <div style="margin-top:8px;color:rgba(255,210,190,0.9);font-size:14px">
+                NASA Artemis + Gateway (crewed lunar prep), then Mars mission study phases; multiple private & national concepts (SpaceX Starship, international proposals).
+              </div>
+              <div style="margin-top:10px" class="fact"><strong>Starship (SpaceX)</strong><div style="opacity:.9;margin-top:6px">Ambitious cargo + crew transport concept intended for large-scale Mars logistics (subject to program changes).</div></div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="panel">
+              <strong>Concept elements</strong>
+              <ul style="margin:8px 0 0 16px;color:rgba(255,210,190,0.9)">
+                <li>ISRU — in-situ resource utilization for propellant & water</li>
+                <li>Shielded habitats & regolith-based protection</li>
+                <li>Autonomous cargo & robotic precursor missions</li>
+              </ul>
+            </div>
+
+            <div class="panel" style="margin-top:12px">
+              <strong>Notes</strong>
+              <div style="margin-top:8px;color:rgba(255,210,190,0.9);font-size:13px">
+                These are conceptual and program-dependent. This section summarizes public plans and research directions; it is not an endorsement.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Gallery -->
+      <section class="card reveal" id="gallery">
+        <h3 style="margin:0 0 12px 0">Gallery</h3>
+        <div class="gallery-grid">
+          <img src="https://mars.nasa.gov/system/downloadable_items/43622_MarsSurface_4k.jpg" class="zoom-thumb" alt="Mars mosaic">
+          <img src="https://mars.nasa.gov/system/resources/detail_files/32548_PIA23764-web.jpg" class="zoom-thumb" alt="Perseverance panorama">
+          <img src="https://mars.nasa.gov/system/downloadable_items/43624_MarsCraters.jpg" class="zoom-thumb" alt="Martian craters">
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="zoom-modal" id="zoomModal" aria-hidden="true">
+    <div class="zoom-card" role="dialog" aria-label="Image inspector">
+      <button class="zoom-close" id="zoomClose">Close ✕</button>
+      <img id="zoomImg" src="" alt="">
+    </div>
+  </div>
+
+  <footer>
+    <div>Professional Mars mosaics & mission imagery — public domain NASA sources where credited.</div>
+    <div>Built: interactive inspection, subtle aesthetics</div>
+  </footer>
+
+<script>
+  // Intersection reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, {threshold:0.12});
+  reveals.forEach(r=>io.observe(r));
+
+  // Thumb swap for surface datasets
+  document.querySelectorAll('.thumbs img').forEach(img=>{
+    img.addEventListener('click', ()=> {
+      const src = img.dataset.src;
+      if(src) document.getElementById('surfaceImg').src = src;
+    });
+  });
+
+  // Scroll helper
+  document.getElementById('toSurface').addEventListener('click', ()=> {
+    document.getElementById('surface').scrollIntoView({behavior:'smooth'});
+  });
+
+  // Zoom modal (pan & wheel zoom)
+  const zoomModal = document.getElementById('zoomModal');
+  const zoomImg = document.getElementById('zoomImg');
+  let scale = 1, ox = 0, oy = 0, dragging=false, sx=0, sy=0;
+
+  function openZoom(src){
+    zoomImg.src = src;
+    scale = 1; ox = 0; oy = 0; setTransform();
+    zoomModal.style.display = 'flex'; zoomModal.setAttribute('aria-hidden','false');
+  }
+  function closeZoom(){
+    zoomModal.style.display = 'none'; zoomModal.setAttribute('aria-hidden','true'); zoomImg.src='';
+  }
+  function setTransform(){ zoomImg.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`; }
+
+  // open hero or thumbnails in inspector
+  document.getElementById('openHero').addEventListener('click', ()=> openZoom(document.getElementById('heroImg').src));
+  document.querySelectorAll('.zoom-thumb').forEach(t => t.addEventListener('click', ()=> openZoom(t.src)));
+  document.getElementById('zoomClose').addEventListener('click', closeZoom);
+
+  zoomModal.addEventListener('pointerdown', (e)=>{ dragging=true; sx=e.clientX; sy=e.clientY; zoomModal.setPointerCapture && zoomModal.setPointerCapture(e.pointerId); });
+  window.addEventListener('pointermove', (e)=>{ if(!dragging) return; const dx = e.clientX - sx; const dy = e.clientY - sy; sx = e.clientX; sy = e.clientY; ox += dx; oy += dy; setTransform(); });
+  window.addEventListener('pointerup', ()=> { dragging=false; try{ zoomModal.releasePointerCapture(); }catch(_){} });
+
+  zoomModal.addEventListener('wheel', (e)=> {
+    e.preventDefault();
+    const delta = -e.deltaY * 0.0018;
+    const newScale = Math.max(0.5, Math.min(8, scale + delta));
+    // simple center-approx zoom
+    ox = ox - (zoomImg.getBoundingClientRect().width/2) * (newScale/scale - 1);
+    oy = oy - (zoomImg.getBoundingClientRect().height/2) * (newScale/scale - 1);
+    scale = newScale; setTransform();
+  }, {passive:false});
+
+  // Toggle dust overlay
+  const dust = document.getElementById('dustOverlay');
+  document.getElementById('toggleDust').addEventListener('click', ()=>{
+    if(dust.style.display === 'none' || dust.style.display === '') dust.style.display = 'block';
+    else dust.style.display = 'none';
+  });
+
+  // Rover animation along SVG path
+  const path = document.getElementById('trackPath');
+  const roverDot = document.getElementById('roverDot');
+  const roverHud = document.getElementById('roverHud').querySelector('.badge');
+  let roverAnim = null, animating = false;
+
+  function animateRover(){
+    if(animating){
+      animating = false;
+      cancelAnimationFrame(roverAnim);
+      roverHud.textContent = 'ROVER — Idle';
+      return;
+    }
+    animating = true;
+    roverHud.textContent = 'ROVER — Driving';
+    const len = path.getTotalLength();
+    let start = null;
+    function step(ts){
+      if(!start) start = ts;
+      const t = ts - start;
+      const duration = 4800; // ms
+      const p = Math.min(1, t / duration);
+      const pt = path.getPointAtLength(p * len);
+      roverDot.setAttribute('cx', pt.x);
+      roverDot.setAttribute('cy', pt.y);
+      // small pulse
+      roverDot.setAttribute('r', 6 + Math.sin(p * Math.PI * 2) * 1.5);
+      if(p < 1 && animating) roverAnim = requestAnimationFrame(step);
+      else { animating = false; roverHud.textContent = 'ROVER — Idle'; }
+    }
+    roverAnim = requestAnimationFrame(step);
+  }
+
+  document.getElementById('animateRover').addEventListener('click', animateRover);
+
+  // Preload inspector images for smoother high-fidelity experience
+  const pre = [
+    document.getElementById('heroImg').src,
+    document.getElementById('surfaceImg').src,
+    ...Array.from(document.querySelectorAll('.zoom-thumb')).map(t=>t.src)
+  ];
+  pre.forEach(u=>{ if(u){ const p = new Image(); p.src = u; }});
+
+  // accessibility: ESC closes modal
+  window.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closeZoom(); });
+</script>
+</body>
+</html>

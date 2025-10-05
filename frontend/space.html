@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Deep Space — Explorer (Professional)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#030311; --bg-2:#070a1a; --muted:#cfeeff; --accent:#8ad7ff; --glass:rgba(255,255,255,0.03);
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,var(--bg-1),#000 60%);color:var(--muted);-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  /* page layout */
+  .stage{position:relative;min-height:100vh;overflow-x:hidden}
+  header{position:fixed;left:0;right:0;top:12px;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;z-index:60;pointer-events:auto}
+  header .title{font-weight:600;font-size:16px}
+  header nav{display:flex;gap:12px}
+  header nav button{background:transparent;border:1px solid var(--glass);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+  main{padding-top:84px;padding-bottom:48px;display:flex;justify-content:center}
+  .container{width:1100px;max-width:94%;display:grid;grid-auto-rows:minmax(320px,auto);gap:28px;position:relative;z-index:20}
+  .card{background:var(--card);padding:18px;border-radius:12px;border:1px solid var(--glass);box-shadow:0 18px 40px rgba(0,0,0,0.65)}
+  h2{margin:0 0 8px 0}
+  p.small{color:rgba(207,238,255,0.85);margin:0 0 12px 0}
+  /* hero / cinematic visual */
+  .hero{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:center;min-height:560px}
+  .visual{position:relative;border-radius:12px;overflow:hidden;height:560px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 30px 80px rgba(0,0,0,0.8)}
+  .visual .layer{position:absolute;inset:0;background-size:cover;background-position:center;will-change:transform,opacity}
+  /* starfield canvas behind layers */
+  canvas#starfield{position:absolute;left:0;top:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
+  .main-image{position:relative;z-index:4;height:100%}
+  .main-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s ease}
+  .nebula-layer{mix-blend-mode:screen;opacity:.12;z-index:6;pointer-events:none}
+  .vignette{position:absolute;inset:0;z-index:12;box-shadow:inset 0 140px 220px rgba(0,0,0,0.65)}
+  .poem{position:absolute;left:40px;bottom:40px;z-index:14;max-width:46%;font-size:16px;color:rgba(200,235,255,0.95);text-shadow:0 14px 30px rgba(0,0,0,0.6)}
+  /* right panel */
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.014), rgba(255,255,255,0.008));padding:16px;border-radius:12px;border:1px solid var(--glass)}
+  .panel .muted{color:rgba(207,238,255,0.8);font-size:14px;line-height:1.45}
+  .controls{display:flex;gap:8px;margin-top:12px}
+  .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+  .btn.primary{border-color:var(--accent);color:var(--accent)}
+  .thumbs{display:flex;gap:8px;margin-top:12px}
+  .thumb{width:86px;height:64px;border-radius:6px;background-size:cover;background-position:center;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+  /* sections */
+  section{padding:14px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .image-card{height:320px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+  .image-card img{width:100%;height:100%;object-fit:cover;display:block}
+  .reveal{opacity:0;transform:translateY(12px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.visible{opacity:1;transform:none}
+  /* exoplanets list */
+  .exolist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .exo{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px}
+  /* facts */
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .fact{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;font-size:13px}
+  /* inspector modal */
+  .inspector{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(0,0,0,0.9),rgba(0,0,0,0.92));z-index:140}
+  .inspect-card{width:94%;max-width:1300px;height:86%;background:#000;border-radius:10px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.04)}
+  .inspect-card img{position:absolute;left:0;top:0;user-select:none;touch-action:none}
+  .inspect-close{position:absolute;right:12px;top:12px;background:rgba(255,255,255,0.04);border:0;padding:8px;border-radius:6px;color:#fff;cursor:pointer;z-index:6}
+  footer{display:flex;justify-content:space-between;align-items:center;padding:12px 28px;color:rgba(255,255,255,0.5);font-size:13px}
+  /* responsive */
+  @media(max-width:1000px){.hero{grid-template-columns:1fr}.poem{display:none}.panel{order:2}}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <header>
+      <div class="title">Deep Space — Professional Gallery</div>
+      <nav>
+        <a class="btn" href="index.html">Home</a>
+        <button class="btn" data-scroll="#overview">Overview</button>
+        <button class="btn" data-scroll="#galaxies">Galaxies</button>
+        <button class="btn" data-scroll="#nebulae">Nebulae</button>
+        <button class="btn" data-scroll="#exoplanets">Exoplanets</button>
+        <button class="btn" data-scroll="#facts">Facts</button>
+      </nav>
+    </header>
+
+    <!-- visual background + hero -->
+    <main>
+      <div class="container">
+        <section class="card hero reveal" id="overview">
+          <div class="visual" id="visual">
+            <canvas id="starfield"></canvas>
+
+            <!-- main image (starts with Pillars) -->
+            <div class="main-image layer" id="mainLayer" style="z-index:4">
+              <img id="mainImg" src="https://www.nasa.gov/sites/default/files/thumbnails/image/potw2146a_0.jpg" alt="Pillars of Creation" />
+            </div>
+
+            <!-- soft nebula overlay (low opacity) -->
+            <div class="layer nebula-layer" id="nebulaLayer" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/6f/M16_pillars_closeup.jpg');z-index:6"></div>
+
+            <div class="vignette"></div>
+
+            <div class="poem">
+              <div style="font-size:13px;color:rgba(200,235,255,0.55);margin-bottom:8px">Hubble & JWST — Layers of Light</div>
+              <div style="font-size:20px;font-weight:600">Pillars of Creation<br><span style="font-weight:300;font-size:15px">Infrared depth meets visible detail — a cosmic conversation.</span></div>
+            </div>
+          </div>
+
+          <aside class="panel">
+            <h2>Overview</h2>
+            <div class="muted">Curated gallery of iconic Hubble and JWST public images. Use the thumbnails to crossfade, or click Inspect to open the full-resolution viewer (pan and wheel-zoom supported).</div>
+            <div class="controls">
+              <button id="crossfadeBtn" class="btn">Soft Crossfade</button>
+              <button id="inspectBtn" class="btn primary">Inspect Full</button>
+            </div>
+
+            <div class="thumbs" id="thumbs">
+              <div class="thumb" data-src="https://www.nasa.gov/sites/default/files/thumbnails/image/potw2146a_0.jpg" style="background-image:url('https://www.nasa.gov/sites/default/files/thumbnails/image/potw2146a_0.jpg')"></div>
+              <div class="thumb" data-src="https://upload.wikimedia.org/wikipedia/commons/5/54/Andromeda_galaxy_%28with_h-alpha%29.jpg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/5/54/Andromeda_galaxy_%28with_h-alpha%29.jpg')"></div>
+              <div class="thumb" data-src="https://upload.wikimedia.org/wikipedia/commons/2/24/Carina_Nebula.jpg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/2/24/Carina_Nebula.jpg')"></div>
+              <div class="thumb" data-src="https://images-assets.nasa.gov/image/PIA23499/PIA23499~orig.jpg" style="background-image:url('https://images-assets.nasa.gov/image/PIA23499/PIA23499~thumb.jpg')"></div>
+            </div>
+            <div style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.6)"><strong>Credit:</strong> NASA / ESA / STScI / Public domain images</div>
+          </aside>
+        </section>
+
+        <!-- Galaxies -->
+        <section class="card reveal" id="galaxies">
+          <h2>Galaxies</h2>
+          <p class="small">Galaxies come in shapes and scales: spirals, ellipticals, and irregulars. Below are representative high-resolution images and short scientific notes.</p>
+
+          <div class="grid-2" style="margin-top:12px">
+            <div class="image-card reveal">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/54/Andromeda_galaxy_%28with_h-alpha%29.jpg" alt="Andromeda">
+            </div>
+            <div>
+              <div class="panel reveal">
+                <strong>Andromeda (M31)</strong>
+                <p class="muted" style="margin-top:8px">A large spiral galaxy ~2.54 million light-years away — the nearest major galaxy to the Milky Way. Its outskirts contain streams from past mergers.</p>
+                <div style="margin-top:10px" class="fact">Type: Spiral · Distance: ~2.5 Mly</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top:12px">
+            <div class="panel reveal">
+              <strong>Elliptical & Irregular Galaxies</strong>
+              <p class="muted" style="margin-top:8px">Ellipticals are dominated by older stars and smooth light profiles; irregulars show chaotic star formation. JWST finds complex structure in the earliest galaxies.</p>
+            </div>
+            <div class="image-card reveal">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/M82_Hubble_WikiSky.jpg" alt="M82 (starburst)">
+            </div>
+          </div>
+        </section>
+
+        <!-- Nebulae -->
+        <section class="card reveal" id="nebulae">
+          <h2>Nebulae</h2>
+          <p class="small">Nebulae are the birthplaces and graveyards of stars. Images below compare Hubble visible-light compositions with JWST infrared depth where available.</p>
+
+          <div class="grid-2" style="margin-top:12px">
+            <div class="image-card reveal">
+              <img src="https://www.nasa.gov/sites/default/files/thumbnails/image/heic1502a.jpg" alt="Carina Nebula (Hubble)">
+            </div>
+            <div class="panel reveal">
+              <strong>Carina Nebula</strong>
+              <p class="muted" style="margin-top:8px">An active star-forming region with massive young stars sculpting the gas and dust. JWST provides infrared access to embedded structures.</p>
+              <div style="margin-top:10px" class="fact">Distance: ~7,500 ly · Active star formation</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="grid-2">
+            <div class="panel reveal">
+              <strong>Pillars of Creation</strong>
+              <p class="muted" style="margin-top:8px">First imaged in visible light by Hubble (1995). JWST revisited the region in infrared, revealing embedded protostars and deeper structure.</p>
+            </div>
+            <div class="image-card reveal">
+              <img src="https://www.nasa.gov/sites/default/files/thumbnails/image/potw2146a_0.jpg" alt="Pillars of Creation (JWST/Hubble)">
+            </div>
+          </div>
+        </section>
+
+        <!-- Exoplanets -->
+        <section class="card reveal" id="exoplanets">
+          <h2>Exoplanets</h2>
+          <p class="small">Thousands of exoplanets have been discovered; a subset have measured masses, radii, atmospheres, or interesting orbital architecture.</p>
+
+          <div class="exolist" style="margin-top:12px">
+            <div class="exo reveal">
+              <strong>Kepler-186f</strong>
+              <div style="margin-top:6px;color:rgba(200,235,255,0.9)">An Earth-size candidate in the habitable zone of an M-dwarf star (discovery via transit photometry).</div>
+              <div style="margin-top:6px;font-size:13px;color:rgba(200,235,255,0.85)">Discovery: Kepler mission · Distance: ~500 ly</div>
+            </div>
+            <div class="exo reveal">
+              <strong>TRAPPIST-1 system</strong>
+              <div style="margin-top:6px;color:rgba(200,235,255,0.9)">Seven Earth-size planets, multiple within the habitable zone — prime targets for atmospheric characterization.</div>
+              <div style="margin-top:6px;font-size:13px;color:rgba(200,235,255,0.85)">Discovery: Ground & Spitzer · Distance: ~40 ly</div>
+            </div>
+            <div class="exo reveal">
+              <strong>HD 209458 b (Osiris)</strong>
+              <div style="margin-top:6px;color:rgba(200,235,255,0.9)">One of the first exoplanets with a detected atmosphere via transit spectroscopy — sodium, hydrogen detected.</div>
+            </div>
+            <div class="exo reveal">
+              <strong>Hot Jupiters & Super-Earths</strong>
+              <div style="margin-top:6px;color:rgba(200,235,255,0.9)">Diverse classes show atmospheres, clouds, and in some cases strong winds and unusual chemistry; JWST expands atmospheric study.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Facts -->
+        <section class="card reveal" id="facts">
+          <h2>Fascinating Facts</h2>
+          <div class="facts" style="margin-top:12px">
+            <div class="fact"><strong>Observable Universe</strong><div style="opacity:.9;margin-top:6px">~93 billion light-years in diameter (comoving distance)</div></div>
+            <div class="fact"><strong>Hubble</strong><div style="opacity:.9;margin-top:6px">Launched 1990 — transformed deep-field astronomy</div></div>
+            <div class="fact"><strong>JWST</strong><div style="opacity:.9;margin-top:6px">Launched 2021 — infrared reach into early Universe</div></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>Curated Hubble & JWST public images · Scientific facts summarized (public domain images used where credited).</footer>
+  </div>
+
+  <!-- Inspector modal -->
+  <div class="inspector" id="inspector" aria-hidden="true">
+    <div class="inspect-card" role="dialog" aria-label="Image inspector">
+      <button class="inspect-close" id="inspectClose">Close ✕</button>
+      <img id="inspectImg" src="" alt="">
+    </div>
+  </div>
+
+<script>
+/*
+  Space — final polished page JS:
+  - animated starfield canvas (parallax on pointer & on scroll)
+  - thumbnails to swap main image (soft cinematic fades)
+  - IntersectionObserver reveal animations
+  - inspector modal with pan + wheel-zoom
+*/
+
+// ---------- STARFIELD ----------
+const starCanvas = document.getElementById('starfield');
+const visual = document.getElementById('visual');
+function resizeCanvas(){
+  starCanvas.width = visual.clientWidth * devicePixelRatio;
+  starCanvas.height = visual.clientHeight * devicePixelRatio;
+  starCanvas.style.width = visual.clientWidth + 'px';
+  starCanvas.style.height = visual.clientHeight + 'px';
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const sctx = starCanvas.getContext('2d');
+let stars = [];
+function initStars(){
+  stars = [];
+  const pixelW = starCanvas.width / devicePixelRatio;
+  const pixelH = starCanvas.height / devicePixelRatio;
+  const count = Math.round(pixelW * pixelH / 30000 * 120);
+  for(let i=0;i<count;i++){
+    stars.push({
+      x: Math.random()*starCanvas.width,
+      y: Math.random()*starCanvas.height,
+      r: (Math.random()*1.6 + 0.2)*devicePixelRatio,
+      a: Math.random()*0.9+0.1,
+      vx: (Math.random()-0.5)*0.02*devicePixelRatio,
+      vy: (Math.random()-0.5)*0.02*devicePixelRatio
+    });
+  }
+}
+initStars();
+
+let last = performance.now();
+function animate(now){
+  const dt = (now - last)*0.06;
+  last = now;
+  sctx.clearRect(0,0,starCanvas.width,starCanvas.height);
+  // faint gradient
+  const g = sctx.createLinearGradient(0,0,0,starCanvas.height);
+  g.addColorStop(0,'rgba(12,16,32,0.0)'); g.addColorStop(1,'rgba(0,0,0,0.25)');
+  sctx.fillStyle = g; sctx.fillRect(0,0,starCanvas.width,starCanvas.height);
+
+  for(const s of stars){
+    s.x += s.vx * dt;
+    s.y += s.vy * dt;
+    if(s.x < -50*devicePixelRatio) s.x = starCanvas.width + 50*devicePixelRatio;
+    if(s.x > starCanvas.width + 50*devicePixelRatio) s.x = -50*devicePixelRatio;
+    if(s.y < -50*devicePixelRatio) s.y = starCanvas.height + 50*devicePixelRatio;
+    if(s.y > starCanvas.height + 50*devicePixelRatio) s.y = -50*devicePixelRatio;
+    sctx.beginPath();
+    sctx.globalAlpha = s.a;
+    sctx.fillStyle = '#cfefff';
+    sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    sctx.fill();
+  }
+  sctx.globalAlpha = 1;
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+// parallax on pointer
+visual.addEventListener('pointermove', (e)=>{
+  const rect = visual.getBoundingClientRect();
+  const dx = (e.clientX - (rect.left + rect.width/2)) / rect.width;
+  const dy = (e.clientY - (rect.top + rect.height/2)) / rect.height;
+  // move main image subtly
+  const mainImg = document.getElementById('mainImg');
+  mainImg.style.transform = `translate(${dx * 6}px, ${dy * 6}px) scale(1.01)`;
+  // nebula layer parallax
+  const neb = document.getElementById('nebulaLayer');
+  neb.style.transform = `translate(${dx * -12}px, ${dy * -8}px) scale(1.02)`;
+  // starfield shift small
+  starCanvas.style.transform = `translate(${dx * -12}px, ${dy * -6}px)`;
+});
+
+// subtle parallax on scroll (affects layers' translateY)
+window.addEventListener('scroll', ()=>{
+  const rect = visual.getBoundingClientRect();
+  const offset = Math.max(-rect.top, 0);
+  document.getElementById('nebulaLayer').style.transform = `translateY(${offset * 0.02}px)`;
+  starCanvas.style.transform = `translateY(${offset * 0.01}px)`;
+});
+
+// ---------- REVEAL ON SCROLL ----------
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, {threshold:0.12});
+reveals.forEach(r=> io.observe(r));
+
+// ---------- THUMBNAIL / MAIN IMAGE SWAP ----------
+const thumbs = document.querySelectorAll('.thumb');
+const mainImg = document.getElementById('mainImg');
+let currentIndex = 0;
+const slides = Array.from(thumbs).map(t => t.dataset.src || t.style.backgroundImage.slice(5,-2));
+thumbs.forEach((t,i)=>{
+  t.addEventListener('click', ()=>{
+    crossfadeTo(i);
+  });
+});
+
+// soft cinematic crossfade
+function crossfadeTo(i){
+  currentIndex = (i + slides.length) % slides.length;
+  const src = slides[currentIndex];
+  const el = document.querySelector('.main-image');
+  el.style.transition = 'transform 400ms cubic-bezier(.2,.9,.28,1), opacity 320ms';
+  el.style.transform = 'scale(0.98)';
+  el.style.opacity = 0.92;
+  setTimeout(()=> {
+    mainImg.src = src;
+    el.style.transform = 'scale(1)';
+    el.style.opacity = 1;
+  }, 260);
+}
+
+// crossfade button toggles nebula overlay opacity for cinematic effect
+const nebula = document.getElementById('nebulaLayer');
+let nebOn = false;
+document.getElementById('crossfadeBtn').addEventListener('click', ()=>{
+  nebOn = !nebOn;
+  nebula.style.transition = 'opacity 700ms ease';
+  nebula.style.opacity = nebOn ? 0.42 : 0.12;
+});
+
+// keyboard navigation for main gallery
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight') crossfadeTo(currentIndex + 1);
+  if(e.key === 'ArrowLeft') crossfadeTo(currentIndex - 1);
+  if(e.key === 'Escape') closeInspector();
+});
+
+// ---------- INSPECTOR (pan + wheel zoom) ----------
+const inspector = document.getElementById('inspector');
+const inspectImg = document.getElementById('inspectImg');
+function openInspector(src){
+  inspectImg.src = src;
+  inspector.style.display = 'flex';
+  inspector.setAttribute('aria-hidden','false');
+  ox = oy = 0; scale = 1; setImgTransform();
+}
+function closeInspector(){ inspector.style.display = 'none'; inspector.setAttribute('aria-hidden','true'); inspectImg.src = ''; }
+document.getElementById('inspectBtn').addEventListener('click', ()=> openInspector(mainImg.src));
+document.getElementById('inspectClose').addEventListener('click', closeInspector);
+
+let dragging=false, sx=0, sy=0, ox=0, oy=0, scale=1;
+function setImgTransform(){ inspectImg.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`; }
+
+inspector.addEventListener('pointerdown', (e)=>{ dragging=true; sx=e.clientX; sy=e.clientY; inspector.setPointerCapture && inspector.setPointerCapture(e.pointerId); });
+window.addEventListener('pointermove', (e)=>{ if(!dragging) return; const dx = e.clientX - sx; const dy = e.clientY - sy; sx = e.clientX; sy = e.clientY; ox += dx; oy += dy; setImgTransform(); });
+window.addEventListener('pointerup', ()=> { dragging=false; try{ inspector.releasePointerCapture(); }catch(_){} });
+
+inspector.addEventListener('wheel', (e)=>{
+  e.preventDefault();
+  const delta = -e.deltaY * 0.0018;
+  const newScale = Math.max(0.5, Math.min(8, scale + delta));
+  // zoom toward center approximation
+  ox = ox - (inspectImg.getBoundingClientRect().width/2) * (newScale/scale - 1);
+  oy = oy - (inspectImg.getBoundingClientRect().height/2) * (newScale/scale - 1);
+  scale = newScale; setImgTransform();
+}, {passive:false});
+
+// allow clicking thumbnails to open direct inspect
+document.querySelectorAll('.thumb').forEach(t=> t.addEventListener('dblclick', ()=> openInspector(t.dataset.src)));
+
+// ---------- NAV BUTTON SMOOTH SCROLL ----------
+document.querySelectorAll('header nav .btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    const sel = btn.getAttribute('data-scroll');
+    if(!sel) return;
+    const el = document.querySelector(sel);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// preload slide images for smoother transitions (high-fidelity)
+slides.forEach(s=>{ const i = new Image(); i.src = s; });
+</script>
+</body>
+</html>

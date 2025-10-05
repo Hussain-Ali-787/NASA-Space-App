@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Moon — Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#020202;--card:#0b0b0d;--muted:#d9d9d9;--accent:#bbbbbb;--glass:rgba(255,255,255,0.03)}
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#000,#070708);font-family:Inter,system-ui;color:#fff;-webkit-font-smoothing:antialiased}
+  header{position:fixed;left:0;right:0;top:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;backdrop-filter:blur(6px);z-index:40;border-bottom:1px solid var(--glass)}
+  header h1{margin:0}
+  main{padding-top:84px;padding-bottom:48px;display:flex;justify-content:center}
+  .container{width:1060px;max-width:94%;display:grid;grid-auto-rows:minmax(320px,auto);gap:28px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.007));padding:18px;border-radius:12px;border:1px solid var(--glass)}
+  .hero{display:grid;grid-template-columns:1fr 420px;gap:22px;align-items:center}
+  .img-frame{height:420px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+  .img-frame img{width:100%;height:100%;object-fit:cover}
+  .panel{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;margin-top:12px}
+  .sites{display:flex;flex-direction:column;gap:8px}
+  .site{padding:8px;border-radius:6px;background:rgba(255,255,255,0.02);cursor:pointer}
+  .site:hover{outline:1px solid rgba(255,255,255,0.03)}
+  footer{position:fixed;left:0;right:0;bottom:0;padding:8px 28px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.3));color:rgba(255,255,255,0.6);font-size:13px}
+  .reveal{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.visible{opacity:1;transform:none}
+  .zoom-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(0,0,0,0.85),rgba(0,0,0,0.9));z-index:90}
+  .zoom-card{width:92%;max-width:1100px;height:78%;background:#000;border-radius:10px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.04)}
+  .zoom-card img{position:absolute;left:0;top:0;user-select:none;touch-action:none}
+  .zoom-close{position:absolute;right:12px;top:12px;background:rgba(255,255,255,0.04);border:0;padding:8px;border-radius:6px;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+  <header><h1>Moon — Professional Explorer</h1><nav style="display:flex;gap:12px"><a href="index.html" style="color:#ddd;text-decoration:none">Home</a><a href="#overview" style="color:#ddd;text-decoration:none">Overview</a><a href="#sites" style="color:#ccc;text-decoration:none">Sites</a></nav></header>
+
+  <main>
+    <div class="container">
+      <section class="card hero reveal" id="overview">
+        <div>
+          <h2 style="margin:0 0 8px 0">Moon overview — high-resolution mosaics</h2>
+          <p style="margin:0;color:rgba(255,255,255,0.9)">Use lunar mosaics to inspect craters and precise Apollo/Chang'e landing locations. Images are institutionally sourced.</p>
+          <div class="panel" style="margin-top:12px">
+            <strong>Datasets</strong>
+            <div style="margin-top:8px;color:var(--muted)">LROC, Clementine, USGS lunar mosaics (public domain where specified)</div>
+            <div style="margin-top:10px"><button class="btn" id="openMoonHero">Open Image</button></div>
+          </div>
+        </div>
+
+        <div class="img-frame">
+          <img id="moonHero" src="https://upload.wikimedia.org/wikipedia/commons/e/e1/FullMoon2010.jpg" alt="Full Moon">
+        </div>
+      </section>
+
+      <section class="card reveal" id="sites">
+        <h3 style="margin:0 0 10px 0">Landing sites & highlights</h3>
+        <div style="display:flex;gap:12px">
+          <div style="flex:1">
+            <div class="img-frame" style="height:520px">
+              <img id="siteMap" src="https://upload.wikimedia.org/wikipedia/commons/8/8e/MoonMap_LROC.png" alt="Lunar mosaic" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+          </div>
+          <aside style="width:360px">
+            <div class="panel">
+              <strong>Notable sites</strong>
+              <div class="sites" style="margin-top:8px">
+                <div class="site" data-pos="Tranquility Base|20%|47%">Apollo 11 — Tranquility Base (1969)</div>
+                <div class="site" data-pos="Hadley Rille|48%|36%">Apollo 15 — Hadley Rille (1971)</div>
+                <div class="site" data-pos="Ocean of Storms|30%|58%">Apollo 12 — Ocean of Storms (1969)</div>
+                <div class="site" data-pos="Chang'e 4|68%|45%">Chang'e 4 — Von Kármán crater (2019)</div>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top:12px">
+              <strong>Quick actions</strong>
+              <div style="margin-top:8px">
+                <button class="btn" id="highlightAll">Highlight All Sites</button>
+                <button class="btn" id="openSiteZoom">Open Map</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="card reveal" id="gallery">
+        <h3 style="margin:0 0 12px 0">Gallery</h3>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <img src="https://www.hq.nasa.gov/alsj/a11/AS11-44-6552HR.jpg" class="zoom-thumb" style="width:100%;height:220px;object-fit:cover;border-radius:8px;cursor:pointer" alt="Apollo 11 on Moon">
+          <img src="https://www.nasa.gov/sites/default/files/thumbnails/image/nh_lorri_pluto_global_v1.jpg" class="zoom-thumb" style="width:100%;height:220px;object-fit:cover;border-radius:8px;cursor:pointer" alt="Lunar closeup">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/MoonMap_LROC.png" class="zoom-thumb" style="width:100%;height:220px;object-fit:cover;border-radius:8px;cursor:pointer" alt="LROC mosaic">
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="zoom-modal" id="zoomModal" aria-hidden="true">
+    <div class="zoom-card">
+      <button class="zoom-close" id="zoomClose">Close ✕</button>
+      <img id="zoomImg" src="">
+    </div>
+  </div>
+
+  <footer>Moon mosaics & historic imagery — institutionally sourced</footer>
+
+<script>
+  // reveals
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries=> entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:0.12});
+  reveals.forEach(r=>io.observe(r));
+
+  // site highlighting (draw simple dots overlay)
+  function createDot(left, top, label){
+    const el = document.createElement('div');
+    el.style.position='absolute'; el.style.left=left; el.style.top=top; el.style.transform='translate(-50%,-50%)';
+    el.style.width='14px'; el.style.height='14px'; el.style.borderRadius='50%';
+    el.style.background='radial-gradient(circle,#fff,#bbb)'; el.style.boxShadow='0 0 10px rgba(255,255,255,0.08)';
+    el.title = label;
+    return el;
+  }
+
+  document.querySelectorAll('.site').forEach(s=>{
+    s.addEventListener('click', ()=>{
+      const [label, left, top] = s.dataset.pos.split('|');
+      // remove previous highlights
+      document.querySelectorAll('.site-dot').forEach(d=>d.remove());
+      const dot = createDot(left, top, label);
+      dot.classList.add('site-dot');
+      document.querySelector('.img-frame').appendChild(dot);
+      // animate
+      dot.animate([{transform:'translate(-50%,-50%) scale(1)'},{transform:'translate(-50%,-50%) scale(1.4)'},{transform:'translate(-50%,-50%) scale(1)'}],{duration:700});
+    });
+  });
+
+  document.getElementById('highlightAll').addEventListener('click', ()=>{
+    document.querySelectorAll('.site-dot').forEach(d=>d.remove());
+    document.querySelectorAll('.site').forEach(s=>{
+      const [label,left,top] = s.dataset.pos.split('|');
+      const dot = createDot(left,top,label);
+      dot.classList.add('site-dot'); document.querySelector('.img-frame').appendChild(dot);
+    });
+  });
+
+  // simple zoom modal (shared with other pages)
+  const zoomModal = document.getElementById('zoomModal'), zoomImg = document.getElementById('zoomImg');
+  document.querySelectorAll('.zoom-thumb, #openMoonHero, #openSiteZoom').forEach(el=>{
+    el.addEventListener('click', ()=> {
+      const src = el.tagName === 'IMG' ? el.src : document.getElementById('siteMap').src;
+      zoomImg.src = src; zoomImg.style.transform='translate(0,0) scale(1)';
+      zoomModal.style.display='flex'; zoomModal.setAttribute('aria-hidden','false');
+    });
+  });
+  document.getElementById('zoomClose').addEventListener('click', ()=> { zoomModal.style.display='none'; zoomImg.src=''; });
+
+  // pan & zoom inside modal
+  let dragging=false, sx=0, sy=0, ox=0, oy=0, scale=1;
+  zoomModal.addEventListener('pointerdown', e=>{ dragging=true; sx=e.clientX; sy=e.clientY; });
+  window.addEventListener('pointermove', e=>{ if(!dragging) return; const dx=e.clientX-sx, dy=e.clientY-sy; sx=e.clientX; sy=e.clientY; ox+=dx; oy+=dy; zoomImg.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`; });
+  window.addEventListener('pointerup', ()=> dragging=false);
+  zoomModal.addEventListener('wheel', e=>{ e.preventDefault(); const d=-e.deltaY*0.0015; scale = Math.max(0.5, Math.min(6, scale + d)); zoomImg.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`; }, {passive:false});
+</script>
+</body>
+</html>

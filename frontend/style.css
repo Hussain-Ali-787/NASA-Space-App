@@ -1,0 +1,307 @@
+/* Reset default margins */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body style */
+body {
+  font-family: 'Georgia', serif;
+  color: white;
+  background-color: black;
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+  margin-left: 30px;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #15d568;
+}
+
+/* Hero Section */
+.hero {
+  background-image: url('milky.webp');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 40px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.overlay h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.cta-btn {
+  background-color: #56896e;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cta-btn:hover {
+  background-color: #a070b0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Reset default styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  background: radial-gradient(circle at 20% 20%, #090a0f, #020024, #090979, #000000);
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Navigation bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #fff;
+  margin-left: 35px;
+  font-size: 1rem;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #00ffff, #a020f0);
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* Hero Section */
+.hero {
+  background: url('oo.jpg') no-repeat center center/cover; /* replace with your image */
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  text-align: center;
+  position: relative;
+}
+
+/* Dark overlay effect */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.overlay {
+  z-index: 2;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.overlay h1 {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+/* Button */
+.cta-btn {
+  margin-top: 25px;
+  background: linear-gradient(90deg, #00ffff, #a020f0);
+  border: none;
+  color: white;
+  padding: 14px 35px;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(160, 32, 240, 0.5);
+}
+
+.cta-btn:hover {
+  background: linear-gradient(90deg, #a020f0, #00ffff);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.back-arrow {
+  position: fixed;
+  top: 10px;
+  left: 5px;
+  font-size: 1rem;             /* Increased arrow size */
+  color: white;
+  background: rgba(0, 224, 255, 0.25);
+  border: 1px solid #00e0ff;
+  border-radius: 30%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  z-index: 100;
+  box-shadow: 0 0 20px rgba(0, 224, 255, 0.5);
+}
+
+
+
+
+
+
+/* ===== DROPDOWN MENU STYLING ===== */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: 0.3s;
+  padding: 10px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  min-width: 180px;
+  box-shadow: 0 8px 16px rgba(0, 224, 255, 0.3);
+  border-radius: 8px;
+  z-index: 1;
+  top: 40px;
+  left: 0;
+}
+
+.dropdown-content a {
+  color: #00e0ff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  transition: 0.3s;
+}
+
+.dropdown-content a:hover {
+  background-color: rgba(0, 224, 255, 0.15);
+  color: white;
+}
+
+/* Show dropdown when hovered */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Smooth hover effects for the main nav */
+nav a:hover,
+.dropbtn:hover {
+  color: #00e0ff;
+  text-shadow: 0 0 10px #00e0ff;
+}
+
